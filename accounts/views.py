@@ -73,7 +73,7 @@ def registerVendor(request):
             vendor.user_profile = UserProfile.objects.get(user=user)
             vendor.save()
             messages.success(request,
-                'Your account has been requested. Please wait for approval.')
+                             'Your account has been requested. Please wait for approval.')
             return redirect('registerVendor')
         else:
             print(form.errors)
@@ -87,3 +87,15 @@ def registerVendor(request):
         }
 
     return render(request, 'accounts/registerVendor.html', context=context)
+
+
+def login(request):
+    return render(request, 'accounts/login.html')
+
+
+def logout(request):
+    return
+
+
+def dashboard(request):
+    return
