@@ -1,13 +1,11 @@
-from multiprocessing import context
-from django.contrib import messages
-from django.http import HttpResponse
+from django.contrib import auth, messages
 from django.shortcuts import redirect, render
 
+from vendors.forms import VendorForm
 from vendors.models import Vendor
 
 from .forms import UserForm
 from .models import User, UserProfile
-from vendors.forms import VendorForm
 
 # Create your views here.
 
@@ -90,12 +88,27 @@ def registerVendor(request):
 
 
 def login(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+
+        user = auth.authenticate(email=email, password=password)
+        if user is not None:
+            auth.login(request, user)
+            messages.success(request, "Login successful")
+            return redirect('dashboard')
+        else:
+            messages.error(request, "Invalid credentials")
+            redirect('login')
+
     return render(request, 'accounts/login.html')
 
 
 def logout(request):
-    return
+    auth.logout(request)
+    messages.info(request, 'You have been loged out')
+    return redirect('login')
 
 
 def dashboard(request):
-    return
+    return render(request, 'accounts/dashboard.html')
