@@ -3,4 +3,5 @@
 {% block content %}
     {% include 'includes/alerts.html' %}
     <h4>Welcome {{user.username}}</h4>
+    <h5>This user is a {{user.get_role_display}}</h5>
 {% endblock %}

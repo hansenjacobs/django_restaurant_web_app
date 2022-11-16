@@ -1,5 +1,7 @@
 from django.contrib import auth, messages
+from django.contrib.auth.decorators import login_required, ano
 from django.shortcuts import redirect, render
+from accounts.utils import get_user_dashboard
 
 from vendors.forms import VendorForm
 from vendors.models import Vendor
@@ -95,8 +97,8 @@ def registerVendor(request):
 
 def login(request):
     if request.user.is_authenticated:
-            messages.warning(request, 'You are already logged in.')
-            return redirect('dashboard')
+        messages.warning(request, 'You are already logged in.')
+        return redirect('myAccount')
     elif request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
@@ -105,7 +107,7 @@ def login(request):
         if user is not None:
             auth.login(request, user)
             messages.success(request, "Login successful")
-            return redirect('dashboard')
+            return redirect('myAccount')
         else:
             messages.error(request, "Invalid credentials")
             redirect('login')
@@ -113,11 +115,24 @@ def login(request):
     return render(request, 'accounts/login.html')
 
 
+@login_required(login_url='login')
 def logout(request):
     auth.logout(request)
     messages.info(request, 'You have been loged out')
     return redirect('login')
 
+@login_required(login_url='login')
+def myAccount(request):
+    user = request.user
+    redirecturl = get_user_dashboard(user)
+    return redirect(redirecturl)
 
-def dashboard(request):
+
+@login_required(login_url='login')
+def customerdashboard(request):
+    return render(request, 'accounts/dashboard.html')
+
+
+@login_required(login_url='login')
+def vendordashboard(request):
     return render(request, 'accounts/dashboard.html')
