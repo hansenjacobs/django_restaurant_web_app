@@ -1,15 +1,12 @@
 from django.contrib import auth, messages
-from django.contrib.auth.decorators import login_required, ano
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect, render
-from accounts.utils import get_user_dashboard
+from accounts.utils import get_user_dashboard, user_is_customer, user_is_vendor
 
 from vendors.forms import VendorForm
-from vendors.models import Vendor
 
 from .forms import UserForm
 from .models import User, UserProfile
-
-# Create your views here.
 
 
 def registerUser(request):
@@ -121,6 +118,7 @@ def logout(request):
     messages.info(request, 'You have been loged out')
     return redirect('login')
 
+
 @login_required(login_url='login')
 def myAccount(request):
     user = request.user
@@ -129,10 +127,12 @@ def myAccount(request):
 
 
 @login_required(login_url='login')
+@user_passes_test(user_is_customer)
 def customerdashboard(request):
     return render(request, 'accounts/dashboard.html')
 
 
 @login_required(login_url='login')
+@user_passes_test(user_is_vendor)
 def vendordashboard(request):
     return render(request, 'accounts/dashboard.html')
