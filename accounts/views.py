@@ -1,7 +1,7 @@
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect, render
-from accounts.utils import get_user_dashboard, user_is_customer, user_is_vendor
+from accounts.utils import get_user_dashboard, user_is_customer, user_is_vendor, send_verification_email
 
 from vendors.forms import VendorForm
 
@@ -38,6 +38,8 @@ def registerUser(request):
             user.role = User.CUSTOMER
             user.save()
 
+            send_verification_email(request, user)
+
             messages.success(request, 'Your account has been created.')
 
             return redirect('registerUser')
@@ -69,12 +71,15 @@ def registerVendor(request):
             user = User.objects.create_user(
                 first_name, last_name, username, email, password)
             user.phone_number = phone
-            user.role = User.RESTAURANT
+            user.role = User.VENDOR
             user.save()
             vendor = v_form.save(commit=False)
             vendor.user = user
             vendor.user_profile = UserProfile.objects.get(user=user)
             vendor.save()
+
+            send_verification_email(request, user)
+
             messages.success(request,
                              'Your account has been requested. Please wait for approval.')
             return redirect('registerVendor')
@@ -89,7 +94,11 @@ def registerVendor(request):
             'v_form': v_form,
         }
 
-    return render(request, 'accounts/registerVendor.html', context=context)
+        return render(request, 'accounts/registerVendor.html', context=context)
+
+
+def activate(request, uidb64, token):
+    return
 
 
 def login(request):
