@@ -52,3 +52,18 @@ def send_verification_email(request, user):
     mail = EmailMessage(mail_subject, message, to=[to_email],
                         from_email='Python Project FoodOnline <support@shopjtx.com>')
     mail.send()
+
+
+def send_password_reset_email(request, user):
+    current_site = get_current_site(request)
+    mail_subject = 'Password Reset'
+    message = render_to_string('accounts/emails/account_password_reset.html', {
+        'user': user,
+        'domain': current_site,
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': default_token_generator.make_token(user),
+    })
+    to_email = user.email
+    mail = EmailMessage(mail_subject, message, to=[to_email],
+                        from_email='Python Project FoodOnline <support@shopjtx.com>')
+    mail.send()
