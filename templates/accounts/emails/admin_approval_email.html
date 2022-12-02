@@ -1,0 +1,10 @@
+{% autoescape off %}
+Hello {{user.first_name}},
+
+{% if is_approved %}
+Congratulations! Your restaurant has been approved.
+{% else %}
+Sorry, you are not eligibile for publishing your menu on our marketplace.
+{% endif %}
+--foodOnline
+{% endautoescape %}

@@ -7,6 +7,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 
+FROM_EMAIL = 'Python Project FoodOnline <support@shopjtx.com>'
+
 
 def get_user_dashboard(user):
     dashboards = {
@@ -50,7 +52,7 @@ def send_verification_email(request, user):
     })
     to_email = user.email
     mail = EmailMessage(mail_subject, message, to=[to_email],
-                        from_email='Python Project FoodOnline <support@shopjtx.com>')
+                        from_email=FROM_EMAIL)
     mail.send()
 
 
@@ -65,5 +67,13 @@ def send_password_reset_email(request, user):
     })
     to_email = user.email
     mail = EmailMessage(mail_subject, message, to=[to_email],
-                        from_email='Python Project FoodOnline <support@shopjtx.com>')
+                        from_email=FROM_EMAIL)
+    mail.send()
+
+
+def send_email(mail_subject, mail_template, context):
+    from_email = FROM_EMAIL
+    message = render_to_string(mail_template, context)
+    to_email = context['user'].email
+    mail = EmailMessage(mail_subject, message, from_email, to=[to_email])
     mail.send()
